@@ -14,13 +14,15 @@ You need to write full item name.
 
 Ex:
 
-![3](https://user-images.githubusercontent.com/54486031/143680084-af568fa3-0bf6-413f-8607-1cace6a680cd.png)
+![3](https://user-images.githubusercontent.com/54486031/143854657-410f60f8-d873-45ee-b61e-04e4d6f8813d.png)
+
 
 Its not important for Black Market items because i put shorcut for Black Market items.
 
 Ex:
 
-![4](https://user-images.githubusercontent.com/54486031/143680161-afef337c-a112-4e3c-8a53-def7c374473d.PNG)
+![4](https://user-images.githubusercontent.com/54486031/143854684-c27c537c-a1ba-4b6f-be1c-73f4b11b8e36.PNG)
+
 
 Output :
 
