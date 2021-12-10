@@ -25,7 +25,7 @@ first = True
 options = EdgeOptions()
 options.use_chromium = True
 options.add_argument('--headless')
-driver = Edge("C:\\Packages\\edgedriver\\msedgedriver.exe",options=options)
+driver = Edge("msedgedriver.exe",options=options)
 driver.set_window_size(2320, 1080)
 
 for say in range(0,2):
