@@ -2,6 +2,10 @@
 
 This script checks RL-Garage prices.
 
+# Executable
+
+Last executables can be downloaded here : https://github.com/fquer/Rocket-League-Trade-Price-Checker-Script/releases/
+
 # Requirements
 
 * beautifulsoup4
