@@ -5,6 +5,9 @@ This script checks RL-Garage prices.
 # Requirements
 
 * beautifulsoup4
+* msedge.selenium_tools
+* collections
+* You need edgedriver, can be found here : https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/  and keep the msedgedriver.exe in the same directory as the script file.
 
 # Usage
 
@@ -17,8 +20,6 @@ Ex:
 ![3](https://user-images.githubusercontent.com/54486031/143854657-410f60f8-d873-45ee-b61e-04e4d6f8813d.png)
 
 
-Its not important for Black Market items because i put shorcut for Black Market items.
-
 Ex:
 
 ![4](https://user-images.githubusercontent.com/54486031/143854684-c27c537c-a1ba-4b6f-be1c-73f4b11b8e36.PNG)
@@ -26,4 +27,6 @@ Ex:
 
 Output :
 
-![5](https://user-images.githubusercontent.com/54486031/143680226-2db17541-d361-411b-8ce2-a9b6a4d5a368.PNG)
+Output is ordered newest to oldest.
+
+![out](https://user-images.githubusercontent.com/54486031/145573935-ad2d61da-453a-42be-a2f1-ddaa9caa81bd.png)
