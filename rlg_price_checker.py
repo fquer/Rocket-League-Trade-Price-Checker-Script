@@ -1,83 +1,186 @@
-import requests
 from bs4 import BeautifulSoup
 import os
+from msedge.selenium_tools import Edge, EdgeOptions
+from time import sleep
+from collections import Counter
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+os.system('cls')
 
-while True:
-    os.system('cls')
-    item = input("Item Name : ")
-    item = item.lower()
-    item = item.replace('(','[')
-    item = item.replace(')',']')
-
-    paint = input("Paint (If its colorless leave it empty) : ")
-    paint = paint.lower()
-    if len(paint) != 0:
-        item = paint.strip() +' '+ item
+delay_click = 0.1
 
 
+sell_array = []
+buy_array = []
 
-    url_h = 'https://www.rl-trades.com//ajax/&h0="{}"&s[]=rl&'.format(item)
-    url_w = 'https://www.rl-trades.com//ajax/&w0="{}"&s[]=rl&'.format(item)
+item = input("Item Name : ")
+item = item.capitalize()
 
-    r_h = requests.get(url_h)
-    source_h = BeautifulSoup(r_h.content,"lxml")
-    r_w = requests.get(url_w)
-    source_w = BeautifulSoup(r_w.content,"lxml")
+paint = input("Paint (If its colorless leave it empty) : ")
+paint = paint.capitalize()
+if paint == '':
+    paint = 'None'
 
-    finded = []
-    wrong = False
-    for j in range(0,2):
-        os.system('cls')
-        control = False
-        print("\tSEARCHING ITEM : ",item,"\n\n")
-        print("\t  SELL ORDER\n")
+first = True
 
-        for td in source_h.find_all('td'):
-            if td.text != "":
-                
-                
-                if td.text == item and control == False:
-                    control = True
-                
-                elif control != False:
-                    if td.text.find('credits') != -1:
-                        try:
-                            print(item," : ",int(td.text.split('xcredits')[0]))
-                            finded.append(td.text.split('xcredits')[0])
-                        except:
-                            print(item," :  [OFFER] ",td.text.strip())
-                            finded.append(td.text.strip())
-                        control = False
+options = EdgeOptions()
+options.use_chromium = True
+options.add_argument('--headless')
+driver = Edge("C:\\Packages\\edgedriver\\msedgedriver.exe",options=options)
+driver.set_window_size(2320, 1080)
+
+for say in range(0,2):
+    driver.get("https://rocket-league.com/trading")
+
+    if first:
+        driver.find_element_by_id("acceptPrivacyPolicy").click()
+    driver.execute_script("window.scrollTo(0, 500)") 
+
+    # Item Arama Baslangici
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[1]/div").click() # Arana tab'ini acma
+    sleep(delay_click)
+
+    item_input = driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[1]/div/div/div/input") # input field bul
+    item_input.send_keys(item) # item'i yaz
+    sleep(delay_click)
+
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[1]/div/div/ul/li[2]").click() # cikan ilk sonuca bas
+    sleep(delay_click)
+    # Item Arama Sonu
+
+
+
+    # Renk Secme Baslangici
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[3]/div").click() # Arana tab'ini acma
+    sleep(delay_click)
+
+    item_paint_input = driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[3]/div/div/div/input") # input field bul
+    item_paint_input.send_keys(paint) # item'i yaz
+    sleep(delay_click)
+
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[3]/div/div/ul/li").click() # cikan ilk sonuca bas
+    sleep(delay_click)
+    # Renk Secme Sonu
+
+
+    # Wants Have Secme Baslangici
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[8]/div").click() # Secme tab'ini acma
+    sleep(delay_click)
+
+    if first:
+        driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[8]/div/div/ul/li[2]").click() # Wants Bas
+    else:
+        driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[8]/div/div/ul/li[3]").click() # Have Bas
+
+    sleep(delay_click)
+    # Wants Have Secme Sonu
+
+    # Platform Secme Baslangici
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[7]/div").click() # Platform Secme tab'ini acma
+    sleep(delay_click)
+    driver.find_element_by_xpath("/html/body/main/div/div/div[1]/div[2]/div/div/form/div[7]/div/div/ul/li[2]").click() # Pc secme
+    # Platform Secme Sonu
+
+    driver.find_element_by_css_selector("input.rlg-btn-primary.rlg-itemfilter__apply").click() # apply filter bas
+
+    source = BeautifulSoup(driver.page_source,"lxml")
+    
+    for has, wants in zip(source.find_all('div', {'class': 'rlg-trade__itemshas'}),source.find_all('div', {'class': 'rlg-trade__itemswants'})):
         
-        
+        for has_item_block, wants_item_block in zip(has.find_all('div', {'class': 'rlg-item'}),wants.find_all('div', {'class': 'rlg-item'})):
 
-        control = False
-        print("\n\n\t   BUY ORDER\n")
+            for has_founded_item, wants_founded_item in zip(has_item_block.find_all('h2', {'class': 'rlg-item__name'}),wants_item_block.find_all('h2', {'class': 'rlg-item__name'})):
 
-        for td in source_w.find_all('td'):
-            if td.text != "":
+                has_founded_paint = has_item_block.find('div', {'class': 'rlg-item__paint'})
+                has_founded_quantity = has_item_block.find('div', {'class': 'rlg-item__quantity'})
+
+                if has_founded_item.text.strip() == "Credits":
+                    if has_founded_quantity != None:
+                        has_searched = has_founded_quantity.text.strip()+' '+has_founded_item.text.strip()  
                 
-                if td.text.find('credits') != -1 and control == False:
-                    try:
-                        cr = int(td.text.split('xcredits')[0])
+                elif has_founded_paint != None:
+                    if has_founded_quantity != None:
+                        has_searched = has_founded_quantity.text.strip()+' '+has_founded_paint.text.strip()+' '+has_founded_item.text.strip()
+                    else:
+                        has_searched = has_founded_paint.text.strip()+' '+has_founded_item.text.strip()
+                else:
+                    if has_founded_quantity != None:
+                        has_searched = has_founded_quantity.text.strip()+' '+has_founded_item.text.strip()
+                    else:
+                        has_searched = has_founded_item.text.strip()
 
-                    except:
-                        cr = '[OFFER] ' + td.text
-                        
-                    control = True
 
-                elif control != False:
+                wants_founded_paint = wants_item_block.find('div', {'class': 'rlg-item__paint'})
+                wants_founded_quantity = wants_item_block.find('div', {'class': 'rlg-item__quantity'})
 
-                    if td.text == item:
-                        print(item," : ",cr)
-                        finded.append(cr)
-                    control = False
-        
-        for i  in finded:
-            if i != "":
-                wrong = True
+                if wants_founded_item.text.strip() == "Credits":
+                    if wants_founded_quantity != None:
+                        wants_searched = wants_founded_quantity.text.strip()+' '+wants_founded_item.text.strip()
+                
+                elif wants_founded_paint != None:
+                    if wants_founded_quantity != None:
+                        wants_searched = wants_founded_quantity.text.strip()+' '+wants_founded_paint.text.strip()+' '+wants_founded_item.text.strip()
+                    else:
+                        wants_searched = wants_founded_paint.text.strip()+' '+wants_founded_item.text.strip()
+                else:
+                    if wants_founded_quantity != None:
+                        wants_searched = wants_founded_quantity.text.strip()+' '+wants_founded_item.text.strip()
+                    else:
+                        wants_searched = wants_founded_item.text.strip()
 
-        if wrong == False:
-            item = item + ' [black market]'
+                if first:
+                    
+                    if paint != 'None':
+                        if has_searched.lower() == paint.lower() + ' ' + item.lower():
+                            sell_array.append(has_searched+"  :  "+wants_searched)
+                    else:
+                        if has_searched.lower() == item.lower():
+                            sell_array.append(has_searched+"  :  "+wants_searched)
+                    
+                else:
+                    
+                    if paint != 'None':
+                        if wants_searched.lower() == paint.lower() + ' ' + item.lower():
+                            buy_array.append(wants_searched+"  :  "+has_searched)
+                    else:
+                        if wants_searched.lower() == item.lower():
+                            buy_array.append(wants_searched+"  :  "+has_searched)
+                    
 
-    input("\nPress enter to search another item...")
+    first = False
+
+driver.quit()
+
+os.system('cls')
+
+print("SELL ORDER")
+for i in sell_array:
+    print(i)
+
+
+sell_count = []
+print("\nCOUNTS")
+
+for i in sell_array:
+    if i.find("Credits") != -1:
+        if i.find("Credits offer") == -1:
+            sell_count.append(i)
+
+for key, value in dict(sorted(Counter(sell_count).items(), key=lambda item: item[1])).items():
+    print(str(key + ' =   x' + str(value)))
+
+
+print("\n\nBUY ORDER")
+for i in buy_array:
+    print(i)
+
+
+buy_count = []
+print("\nCOUNTS")
+
+for i in buy_array:
+    if i.find("Credits") != -1:
+        if i.find("Credits offer") == -1:
+            buy_count.append(i)
+
+for key, value in dict(sorted(Counter(buy_count).items(), key=lambda item: item[1])).items():
+    print(str(key + ' =   x' + str(value)))
