@@ -1,3 +1,4 @@
+from http.client import FOUND
 from bs4 import BeautifulSoup
 import os
 from msedge.selenium_tools import Edge, EdgeOptions
@@ -15,6 +16,7 @@ def exit_handler():
     
 atexit.register(exit_handler)
 
+multiple_offers_in_trade = False   #Keep false for better price analysis
 delay_click = 0.1
 print("Loading Driver...")
 options = EdgeOptions()
@@ -24,6 +26,8 @@ driver = Edge("msedgedriver.exe",options=options)
 driver.set_window_size(2320, 1080)
 driver.get("https://rocket-league.com/trading")
 driver.find_element_by_id("acceptPrivacyPolicy").click()
+
+founded = False
 
 while True:
 
@@ -141,18 +145,33 @@ while True:
                         if paint != 'None':
                             if has_searched.lower() == paint.lower() + ' ' + item.lower():
                                 sell_array.append(has_searched+"  :  "+wants_searched)
+                                founded = True
+                                break
                         else:
                             if has_searched.lower() == item.lower():
                                 sell_array.append(has_searched+"  :  "+wants_searched)
+                                founded = True
+                                break
                         
                     else:
                         
                         if paint != 'None':
                             if wants_searched.lower() == paint.lower() + ' ' + item.lower():
                                 buy_array.append(wants_searched+"  :  "+has_searched)
+                                founded = True
+                                break
                         else:
                             if wants_searched.lower() == item.lower():
                                 buy_array.append(wants_searched+"  :  "+has_searched)
+                                founded = True
+                                break
+
+                if founded == True and multiple_offers_in_trade == False:
+                    founded = False
+                    break
+
+                
+
                         
 
         first = False
