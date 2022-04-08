@@ -1,4 +1,3 @@
-from http.client import FOUND
 from bs4 import BeautifulSoup
 import os
 from msedge.selenium_tools import Edge, EdgeOptions
@@ -33,6 +32,8 @@ while True:
 
     sell_array = []
     buy_array = []
+    sell_times = []
+    buy_times = []
     os.system('cls')
     item = input("Item Name : ")
     item = item.capitalize()
@@ -97,7 +98,7 @@ while True:
 
         source = BeautifulSoup(driver.page_source,"lxml")
         
-        for has, wants in zip(source.find_all('div', {'class': 'rlg-trade__itemshas'}),source.find_all('div', {'class': 'rlg-trade__itemswants'})):
+        for has, wants, time in zip(source.find_all('div', {'class': 'rlg-trade__itemshas'}),source.find_all('div', {'class': 'rlg-trade__itemswants'}),source.find_all('span', {'class': 'rlg-trade__time'})):
             
             for has_item_block, wants_item_block in zip(has.find_all('div', {'class': 'rlg-item'}),wants.find_all('div', {'class': 'rlg-item'})):
 
@@ -146,11 +147,13 @@ while True:
                             if has_searched.lower() == paint.lower() + ' ' + item.lower():
                                 sell_array.append(has_searched+"  :  "+wants_searched)
                                 founded = True
+                                sell_times.append(time.text)
                                 break
                         else:
                             if has_searched.lower() == item.lower():
                                 sell_array.append(has_searched+"  :  "+wants_searched)
                                 founded = True
+                                sell_times.append(time.text)
                                 break
                         
                     else:
@@ -159,11 +162,13 @@ while True:
                             if wants_searched.lower() == paint.lower() + ' ' + item.lower():
                                 buy_array.append(wants_searched+"  :  "+has_searched)
                                 founded = True
+                                buy_times.append(time.text)
                                 break
                         else:
                             if wants_searched.lower() == item.lower():
                                 buy_array.append(wants_searched+"  :  "+has_searched)
                                 founded = True
+                                buy_times.append(time.text)
                                 break
 
                 if founded == True and multiple_offers_in_trade == False:
@@ -179,8 +184,8 @@ while True:
     os.system('cls')
 
     print("SELL ORDER")
-    for i in sell_array:
-        print(i)
+    for i, j in zip(sell_array, sell_times):
+        print(i + " || " + j.split('\n')[1])
 
 
     sell_count = []
@@ -196,8 +201,8 @@ while True:
 
 
     print("\n\nBUY ORDER")
-    for i in buy_array:
-        print(i)
+    for i, j in zip(buy_array, buy_times):
+        print(i + " || " + j.split('\n')[1])
 
 
     buy_count = []
