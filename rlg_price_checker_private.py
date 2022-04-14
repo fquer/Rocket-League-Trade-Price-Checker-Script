@@ -171,49 +171,49 @@ while True:
 
         for item_has, item_wants, paint_has, paint_wants in zip(has_items,wants_items,has_colours,wants_colours):
             if type(item_has) == str and item_has.strip() != "":
-                
-                item = item_has
-                has_items.remove(item_has)
-                wants_items.remove(item_wants)
-
-                if type(paint_has) == str and paint_has.strip() != "":
-                    if paint_has[0] != "#":
-                        paint = paint_has
-                        has_colours.remove(paint_has)
-                        wants_colours.remove(paint_wants)
-
+                if item_has[0] != "#":
+                    item = item_has
+                    has_items.remove(item_has)
+                    wants_items.remove(item_wants)
+                    
+                    if type(paint_has) == str and paint_has.strip() != "":
+                        if paint_has[0] != "#":
+                            paint = paint_has
+                            has_colours.remove(paint_has)
+                            wants_colours.remove(paint_wants)
+                            
+                        else:
+                            paint = "None"
+                            del has_colours[0]
+                            del wants_colours[0]
                     else:
                         paint = "None"
                         del has_colours[0]
                         del wants_colours[0]
-                else:
-                    paint = "None"
-                    del has_colours[0]
-                    del wants_colours[0]
 
-                break
+                    break
 
             elif type(item_wants) == str and item_wants.strip() != "":
-                
-                item = item_wants
-                has_items.remove(item_has)
-                wants_items.remove(item_wants)
-                if type(paint_wants) == str and paint_wants.strip() != "":
-                    if paint_wants[0] != "#":
-                        paint = paint_wants
-                        has_colours.remove(paint_has)
-                        wants_colours.remove(paint_wants)
-
+                if item_wants[0] != "#":
+                    item = item_wants
+                    has_items.remove(item_has)
+                    wants_items.remove(item_wants)
+                    if type(paint_wants) == str and paint_wants.strip() != "":
+                        if paint_wants[0] != "#":
+                            paint = paint_wants
+                            has_colours.remove(paint_has)
+                            wants_colours.remove(paint_wants)
+                            
+                        else:
+                            paint = "None"
+                            del has_colours[0]
+                            del wants_colours[0]
                     else:
                         paint = "None"
                         del has_colours[0]
                         del wants_colours[0]
-                else:
-                    paint = "None"
-                    del has_colours[0]
-                    del wants_colours[0]
 
-                break
+                    break
     else:
         break
     
