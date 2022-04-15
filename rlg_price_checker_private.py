@@ -10,13 +10,16 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.system('cls')
 
 def exit_handler():
-    #subprocess.call('taskkill /f /im msedgedriver.exe')
-    #subprocess.call('taskkill /f /im msedge.exe')
-    pass
+    subprocess.call('taskkill /f /im msedgedriver.exe')
+    subprocess.call('taskkill /f /im msedge.exe')
     
 atexit.register(exit_handler)
 
 OFFERS_LOCATION = 'C:\\Trade\\' # Ends with double backslash
+
+multiple_offers_in_trade = False   #Keep false for better price analysis
+delay_click = 0.1
+load_time = 4
 
 def readData():
     # OFFER READING
@@ -142,9 +145,7 @@ def readData():
 
     return has_items, wants_items, has_colours, wants_colours, has_certification, wants_certification, has_items_2, wants_items_2, has_colours_2, wants_colours_2, has_certification_2, wants_certification_2, has_items_3, wants_items_3, has_colours_3, wants_colours_3, has_certification_3, wants_certification_3
 
-multiple_offers_in_trade = False   #Keep false for better price analysis
-delay_click = 0.1
-load_time = 4
+
 print("Loading Driver...")
 options = EdgeOptions()
 options.use_chromium = True
@@ -160,64 +161,47 @@ os.system('cls')
 file = open('price_list.txt', 'w')
 has_items, wants_items, has_colours, wants_colours, has_certification, wants_certification, has_items_2, wants_items_2, has_colours_2, wants_colours_2, has_certification_2, wants_certification_2, has_items_3, wants_items_3, has_colours_3, wants_colours_3, has_certification_3, wants_certification_3 = readData()
 
+item_counter = 0
+
 while True:
+
 
     sell_array = []
     buy_array = []
     sell_times = []
     buy_times = []
     
-    if len(has_items) != 0:
-
-        for item_has, item_wants, paint_has, paint_wants in zip(has_items,wants_items,has_colours,wants_colours):
-            if type(item_has) == str and item_has.strip() != "":
-                if item_has[0] != "#":
-                    item = item_has
-                    has_items.remove(item_has)
-                    wants_items.remove(item_wants)
-                    
-                    if type(paint_has) == str and paint_has.strip() != "":
-                        if paint_has[0] != "#":
-                            paint = paint_has
-                            has_colours.remove(paint_has)
-                            wants_colours.remove(paint_wants)
-                            
-                        else:
-                            paint = "None"
-                            del has_colours[0]
-                            del wants_colours[0]
-                    else:
-                        paint = "None"
-                        del has_colours[0]
-                        del wants_colours[0]
-
-                    break
-
-            elif type(item_wants) == str and item_wants.strip() != "":
-                if item_wants[0] != "#":
-                    item = item_wants
-                    has_items.remove(item_has)
-                    wants_items.remove(item_wants)
-                    if type(paint_wants) == str and paint_wants.strip() != "":
-                        if paint_wants[0] != "#":
-                            paint = paint_wants
-                            has_colours.remove(paint_has)
-                            wants_colours.remove(paint_wants)
-                            
-                        else:
-                            paint = "None"
-                            del has_colours[0]
-                            del wants_colours[0]
-                    else:
-                        paint = "None"
-                        del has_colours[0]
-                        del wants_colours[0]
-
-                    break
+    if item_counter != len(has_items):   
+        if type(has_items[item_counter]) == str and has_items[item_counter].strip() != "":
+            if has_items[item_counter][0] != "#":
+                item = has_items[item_counter]
+                if type(has_colours[item_counter]) == str and has_colours[item_counter].strip() != "":               
+                    paint = has_colours[item_counter]
+                else:
+                    paint = "None"
+            else:
+                item = has_items[item_counter][1:]
+                if type(has_colours[item_counter][1:]) == str and has_colours[item_counter][1:].strip() != "":               
+                    paint = has_colours[item_counter][1:]
+                else:
+                    paint = "None"
+        elif type(wants_items[item_counter]) == str and wants_items[item_counter].strip() != "":              
+            if wants_items[item_counter][0] != "#":
+                item = wants_items[item_counter]
+                if type(wants_colours[item_counter]) == str and wants_colours[item_counter].strip() != "":               
+                    paint = wants_colours[item_counter]
+                else:
+                    paint = "None"
+            else:
+                item = wants_items[item_counter][1:]
+                if type(wants_colours[item_counter][1:]) == str and wants_colours[item_counter][1:].strip() != "":               
+                    paint = wants_colours[item_counter][1:]
+                else:
+                    paint = "None"
     else:
         break
+    item_counter += 1
     
-
     first = True
 
     for say in range(0,2):
@@ -350,16 +334,8 @@ while True:
                     founded = False
                     break
                     
-
-
-                
-
-                        
-
         first = False
 
-
-    
     file.write("\n\nSELL ORDER\n\n")
     for i, j in zip(sell_array, sell_times):
         file.write(i + " || " + j.split('\n')[1] + "\n")
@@ -376,7 +352,6 @@ while True:
 
     for key, value in dict(sorted(Counter(sell_count).items(), key=lambda item: item[1])).items():
         file.write(str(key + ' =   x' + str(value)) + "\n")
-
 
 
     file.write("\n\nBUY ORDER\n\n")
@@ -401,3 +376,4 @@ while True:
 
 print("\nDone !")
 file.close()
+driver.quit()
