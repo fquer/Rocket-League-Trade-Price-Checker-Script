@@ -1,0 +1,2 @@
+python rlg_price_checker.py
+PAUSE

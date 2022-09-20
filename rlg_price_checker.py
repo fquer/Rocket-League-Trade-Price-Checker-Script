@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import os
-from msedge.selenium_tools import Edge, EdgeOptions
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from time import sleep
 from collections import Counter
 import atexit
@@ -10,18 +11,17 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 os.system('cls')
 
 def exit_handler():
-    subprocess.call('taskkill /f /im msedgedriver.exe')
-    subprocess.call('taskkill /f /im msedge.exe')
+    subprocess.call('taskkill /f /im firefox.exe')
+    subprocess.call('taskkill /f /im geckodriver.exe')
     
 atexit.register(exit_handler)
 
 multiple_offers_in_trade = False   #Keep false for better price analysis
 delay_click = 0.1
 print("Loading Driver...")
-options = EdgeOptions()
-options.use_chromium = True
-options.add_argument('--headless')
-driver = Edge("msedgedriver.exe",options=options)
+firefox_options = FirefoxOptions()
+firefox_options.headless = True
+driver = webdriver.Firefox(options=firefox_options, executable_path='geckodriver.exe')
 driver.set_window_size(2320, 1080)
 driver.get("https://rocket-league.com/trading")
 driver.find_element_by_id("acceptPrivacyPolicy").click()
